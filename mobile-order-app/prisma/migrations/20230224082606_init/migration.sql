@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Store" ALTER COLUMN "distance" SET DATA TYPE DOUBLE PRECISION;

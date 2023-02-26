@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id     Int     @id @default(autoincrement())
+  email  String  @unique
+  name   String
+  orders Order[]
+}
+
+model Menu {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  explanation   String?
+  price         Float
+  toppings      Topping[]
+  dealingStores Store[]
+  orders        Order[]
+}
+
+model Topping {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  price Float
+  menus Menu[]
+}
+
+model Store {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  // 良くないけど、簡単のため住所、営業中か否か、現在地からの距離は下記の形式で持つ
+  address  String
+  isOpen   Boolean
+  distance Float
+  menus    Menu[]
+  orders   Order[]
+}
+
+model Payment {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  orders Order[]
+}
+
+model Order {
+  id         Int     @id @default(autoincrement())
+  menus      Menu[]
+  store      Store   @relation(fields: [storeId], references: [id])
+  storeId    Int
+  customer   User    @relation(fields: [customerId], references: [id])
+  customerId Int
+  payment    Payment @relation(fields: [paymentId], references: [id])
+  paymentId  Int
+}
